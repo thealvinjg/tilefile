@@ -1,109 +1,124 @@
 import { useEffect, useState } from "react";
 import './App.css';
+import { getFiles, saveFiles, deleteFiles, patchFiles } from "./services/tileFileService";
 
-import { getEngineers, saveEngineer, deleteEngineer, patchEngineer } from "./services/softwareEngineerService";
+import TileList from "./components/TileList";
+import TileForm from "./components/TileForm";
+import PreviewPanel from "./components/PreviewPanel";
 
-function App() {
+const App = () => {
   const [editingId, setEditingId] = useState(null);
-  const [engineers, setEngineers] = useState([]);
-  const [form, setForm] = useState({
-    id: null,
-    name: "",
-    techStack: ""
-  });
+  const [files, setFiles] = useState([]);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [form, setForm] = useState({ name: "", file: null, gDriveLink: "" });
 
-  // Load on mount
   useEffect(() => {
-    refreshEngineers();
-  }, []);
+    refreshFiles();
+    if (showPreview && editingId) {
+      // Re-use your existing preview logic
+      setPreviewUrl(`http://localhost:8080/api/v1/tile-file/${editingId}/preview`);
+    } 
+    // 2. If Preview is OFF or No File Selected -> Clear it
+    else {
+      setPreviewUrl(null);
+    }
+  }, [showPreview, editingId]);
 
-  const refreshEngineers = () => {
-    getEngineers()
-      .then(setEngineers)
-      .catch(console.error);
+  const refreshFiles = () => {
+    getFiles().then(setFiles).catch(console.error);
+  };
+
+  const handleSelect = (file) => {
+    // If clicking the same file, deselect it. Otherwise, select new one.
+    if (editingId === file.id) {
+        handleCancel();
+    } else {
+        setEditingId(file.id);
+        setForm({ name: file.name, file: null, gDriveLink: file.gDriveLink || "" });
+        // Reset file input visual
+        if(document.getElementById("fileInput")) document.getElementById("fileInput").value = "";
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setForm({ name: "", file: null, gDriveLink: "" });
+    setPreviewUrl(null); // Optional: Clear preview when deselecting
+    if(document.getElementById("fileInput")) document.getElementById("fileInput").value = "";
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!form.name || !form.techStack) return alert("All fields required!");
-  
-    const payload = { name: form.name, techStack: form.techStack };
-  
-    const action = editingId
-      ? patchEngineer(editingId, payload)   // UPDATE
-      : saveEngineer(payload);              // CREATE
-  
-    action
-      .then(() => {
-        refreshEngineers();
-        setForm({ name: "", techStack: "" });
-        setEditingId(null);
-      })
-      .catch(console.error);
+    const formData = new FormData();
+    if (form.name) formData.append("name", form.name);
+    if (form.file) formData.append("file", form.file);
+    if (form.gDriveLink) formData.append("gDriveLink", form.gDriveLink);
+
+    if (!editingId && !form.file) {
+      alert("Please select a PDF file to upload.");
+      return; // Stop the function here
+  }
+
+    const action = editingId ? patchFiles(editingId, formData) : saveFiles(formData);
+
+    action.then(() => {
+        refreshFiles();
+        handleCancel();
+    }).catch(console.error);
   };
 
-  const handleDelete = (id, name, techStack) => {
-    deleteEngineer(id, { name, techStack })
-      .then(refreshEngineers)
-      .catch(console.error);
+  const handleDelete = (id) => {
+    if (previewUrl && previewUrl.includes(id)) setPreviewUrl(null);
+    deleteFiles(id).then(refreshFiles).catch(console.error);
+    setForm({ name: "", file: null, GDriveLink: "" });
+    handleCancel();
   };
 
-  const handleEdit = (engineer) => {
-    setForm({
-      name: engineer.name,
-      techStack: engineer.techStack
-    });
-    setEditingId(engineer.id);
+  const handleEdit = (file) => {
+    setForm({ name: file.name, file: null, GDriveLink: file.GDriveLink });
+    setEditingId(file.id);
+    if(document.getElementById("fileInput")) document.getElementById("fileInput").value = "";
+  };
+
+  const handlePreview = (id) => {
+    setPreviewUrl(`http://localhost:8080/api/v1/tile-file/${id}/preview`);
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Software Engineers</h1>
+    <div className="app-container">
+      
+      {/* Left Container */}
+      <div className="left-panel">
+        <h1>TileFile Manager</h1>
 
-      {/* LIST */}
-      <ul>
-        {engineers.map((eng) => (
-          <li key={eng.id}>
-            {eng.name} — {eng.techStack}
-            <button
-              style={{ marginLeft: "10px" }}
-              onClick={() => handleEdit(eng)}
-            >
-              Edit
-            </button>
-
-            <button
-              style={{ marginLeft: "10px", color: "white", background: "red" }}
-              onClick={() => handleDelete(eng.id)}
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
-
-      <hr />
-
-      {/* FORM */}
-      <h2>Add Engineer</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="Name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-        />
-        <input
-          placeholder="Tech Stack"
-          value={form.techStack}
-          onChange={(e) => setForm({ ...form, techStack: e.target.value })}
+        <button className={`btn ${showPreview ? "btn-primary" : "btn-delete"}`} onClick={() => setShowPreview(!showPreview)}>{showPreview ? `Preview will be shown` : `Preview will not be shown`}</button>
+        
+        <TileList 
+          files={files} 
+          selectedId={editingId}
+          onSelect={handleSelect}
+          onPreview={handlePreview}
+          showPreview={showPreview}
         />
 
-        <button type="submit">
-          {editingId ? "Update Engineer" : "Save Engineer"}
-        </button>
-      </form>
+        {/* Form reacts to selection */}
+        <TileForm 
+          form={form} 
+          setForm={setForm} 
+          editingId={editingId} 
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+          onDelete={handleDelete}
+          onPreview={handlePreview}
+        />
+      </div>
+
+      {/* Right Container */}
+      <PreviewPanel previewUrl={previewUrl} />
+      
     </div>
   );
-}
+};
 
 export default App;

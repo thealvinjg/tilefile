@@ -1,42 +1,249 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* --- Layout Containers --- */
+.app-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  font-family: sans-serif;
+  height: 100vh; /* Optional: Makes app full height */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.left-panel {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.right-panel {
+  flex: 1;
+  border-left: 2px solid #ccc;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* --- Table Layout --- */
+.table-container {
+  overflow-x: auto; /* Handles scrolling on small screens */
+  margin-bottom: 20px;
 }
 
-.card {
-  padding: 2em;
+.tile-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
 }
 
-.read-the-docs {
-  color: #888;
+.tile-table th {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 2px solid #4d4d4d;
+  color: #e0e0e0;
+  font-weight: 600;
+  background-color: #4d4d4d;
+}
+
+.tile-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.tile-row {
+  cursor: pointer;
+}
+
+/* Row Hover Effect */
+.tile-row:hover {
+  background-color: #939393; /* Light blue hover */
+}
+
+.tile-row.selected-row {
+  background-color: #939393;
+}
+
+/* --- Specific Columns --- */
+
+/* Clickable Name */
+.tile-name-cell {
+  color: #e0e0e0;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tile-name-cell:hover {
+  color: #e0e0e0;
+  text-decoration: underline;
+}
+
+/* Muted Text (for dates) */
+.text-muted {
+  color: #e0e0e0;
+  font-size: 0.9em;
+}
+
+/* Google Drive Badge Placeholder */
+.drive-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.drive-badge.pending {
+  background-color: #eee;
+  color: #666;
+}
+
+.drive-badge.uploaded {
+  background-color: #e6f4ea;
+  color: #1e8e3e;
+}
+
+/* --- Action Buttons (Icon Style) --- */
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  margin-left: 5px;
+}
+
+.btn-icon.edit {
+  color: #555;
+}
+.btn-icon.edit:hover {
+  background-color: #e0e0e0;
+  color: #000;
+}
+
+.btn-icon.delete {
+  color: #cc0000;
+}
+.btn-icon.delete:hover {
+  background-color: #ffe6e6;
+}
+
+/* --- Buttons --- */
+/* Base button style */
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s;
+  margin-bottom: 10px;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* Specific button variants */
+.btn-preview {
+  background-color: teal;
+  color: white;
+  margin-right: 5px;
+}
+
+.btn-edit {
+  background-color: #e0e0e0; /* Light gray */
+  color: #333;
+  margin-right: 5px;
+}
+
+.btn-delete {
+  background-color: maroon;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #007bff; /* Blue */
+  color: white;
+  width: 100%; /* Make submit button wide */
+}
+
+.btn-cancel {
+  background-color: orange;
+  color: white;
+}
+
+/* --- Form Styling --- */
+.tile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+  margin-top: 10px;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.form-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Form Layout */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+/* Button Layouts */
+.full-width {
+    width: 100%;
+}
+
+.selected-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+}
+
+.option-row {
+    display: flex;
+    gap: 10px;
+}
+
+
+/* --- Preview Panel --- */
+.preview-iframe {
+  width: 100%;
+  height: 800px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.preview-placeholder {
+  height: 400px;
+  background-color: #f0f0f0;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: 2px dashed #ccc;
 }
