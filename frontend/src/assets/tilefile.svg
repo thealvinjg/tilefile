@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Folder back -->
+  <path d="M6 18C6 15.8 7.8 14 10 14H24L28 18H54C56.2 18 58 19.8 58 22V46C58 48.2 56.2 50 54 50H10C7.8 50 6 48.2 6 46V18Z" fill="#F4C430"></path>
+
+  <!-- Folder front -->
+  <path d="M6 22H58V46C58 48.2 56.2 50 54 50H10C7.8 50 6 48.2 6 46V22Z" fill="#FFD966"></path>
+
+  <!-- File -->
+  <rect x="22" y="26" width="20" height="18" rx="2" fill="#FFFFFF"></rect>
+  <line x1="26" y1="32" x2="38" y2="32" stroke="#C0C0C0" stroke-width="2"></line>
+  <line x1="26" y1="36" x2="38" y2="36" stroke="#C0C0C0" stroke-width="2"></line>
+</svg>

@@ -5,6 +5,7 @@
   padding: 20px;
   font-family: sans-serif;
   height: 100vh; /* Optional: Makes app full height */
+  width: 90vw;
 }
 
 .left-panel {
@@ -26,6 +27,8 @@
 .table-container {
   overflow-x: auto; /* Handles scrolling on small screens */
   margin-bottom: 20px;
+  overflow-y: auto; 
+  min-height: 225px;
 }
 
 .tile-table {
@@ -208,6 +211,46 @@
     color: #e0e0e0;
 }
 
+/* Container for the selected file badge */
+.selected-file-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #272727; /* Light grey/blue background */
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 5px;
+}
+
+/* The file name text */
+.file-name-text {
+  font-size: 0.9rem;
+  color: #ececec;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Adds "..." if name is too long */
+  white-space: nowrap;
+  max-width: 200px; /* Adjust based on your width */
+  font-weight: 500;
+}
+
+/* The X button */
+.btn-remove-file {
+  background: none;
+  border: none;
+  color: #ef4444; /* Red color */
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: 10px;
+  transition: color 0.2s;
+}
+
+.btn-remove-file:hover {
+  color: #b91c1c; /* Darker red on hover */
+}
+
 /* Button Layouts */
 .full-width {
     width: 100%;
@@ -231,7 +274,7 @@
 /* --- Preview Panel --- */
 .preview-iframe {
   width: 100%;
-  height: 800px;
+  height: 100%;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: white;
@@ -239,11 +282,54 @@
 
 .preview-placeholder {
   height: 400px;
-  background-color: #f0f0f0;
-  color: #666;
+  background-color: #666;
+  color: #ccc;
   display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
   border: 2px dashed #ccc;
+}
+
+.btn-import {
+  background-color: #10b981; /* Green */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.btn-import:hover {
+  background-color: #059669; /* Darker Green */
+}
+
+.btn-import-bulk {
+  background-color: #2563eb; /* Blue */
+  color: white;
+  border: none;
+  padding: 6px 15px;
+  border-radius: 20px; /* Pill shape */
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+}
+
+.btn-import-bulk:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.selection-badge {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
 }

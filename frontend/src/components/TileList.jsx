@@ -1,8 +1,9 @@
 import "../App.css";
 
-export default function TileList({ files, selectedId, onSelect, onPreview, showPreview }) {
+export default function TileList({ files, selectedIds, onSelect }) {
   return (
     <div className="table-container">
+      <h2>Files uploaded to database</h2>
       <table className="tile-table">
         <thead>
           <tr>
@@ -14,21 +15,22 @@ export default function TileList({ files, selectedId, onSelect, onPreview, showP
         </thead>
         <tbody>
           {files.map((file) => {
-            const isSelected = file.id === selectedId;
+            // Check if this specific ID is in the Set
+            const isSelected = selectedIds.has(file.id);
 
             return (
               <tr 
                 key={file.id} 
                 className={`tile-row ${isSelected ? "selected-row" : ""}`}
-                onClick={() => {onSelect(file); if (showPreview) onPreview(file.id);}} // Clicking row selects it
+                // Pass 'e' (event) to the handler
+                onClick={(e) => onSelect(file, e)} 
               >
-                {/* Checkbox: Controlled by selectedId */}
                 <td>
                   <input 
                     type="checkbox" 
                     checked={isSelected}
-                    onChange={() => onSelect(file)}
-                    style={{ cursor: "pointer" }}
+                    readOnly // React handles the click on the row/tr
+                    style={{ pointerEvents: "none" }} // Let the row click handle it
                   />
                 </td>
 

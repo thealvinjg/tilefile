@@ -82,7 +82,7 @@ public class TileFileController {
     }
 
     @PatchMapping("/{id}")
-    // TODO: don't use SoftwareEngineer entity directly (DTO)
+    // TODO: don't use TileFile entity directly (DTO)
     public void patchFile(@PathVariable Integer id,
                                       @RequestParam(required = false) String name,
                                       @RequestParam(required = false) MultipartFile file,

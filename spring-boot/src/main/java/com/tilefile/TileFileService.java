@@ -1,6 +1,7 @@
 package com.tilefile;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -26,10 +27,6 @@ public class TileFileService {
                 .orElseThrow(() -> new IllegalStateException(id + " not found"));
     }
 
-    public void insertFile(TileFile tileFile) {
-        tileFileRepository.save(tileFile);
-    }
-
     public void storeFile(MultipartFile file, String gDriveLink) throws IOException {
         String fileName = file.getOriginalFilename();
 
@@ -48,11 +45,16 @@ public class TileFileService {
         tileFileRepository.save(currentFile);
     }
 
+    public void insertFile(TileFile tileFile) {
+        tileFileRepository.save(tileFile);
+    }
+
     public void deleteFile(Integer id) {
         TileFile currentFile = getFileById(id);
         tileFileRepository.delete(currentFile);
     }
 
+    @Transactional // ensures data integrity. Operation is rolled back if database update fails
     public void patchFile(Integer id, String name, MultipartFile file, String gDriveLink) throws IOException {
         TileFile currentFile = tileFileRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException(id + " not found"));

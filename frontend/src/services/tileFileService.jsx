@@ -1,4 +1,5 @@
 const API_URL = "http://localhost:8080/api/v1/tile-file";
+const LOCAL_SCAN_URL = "http://localhost:8080/api/v1/local-scan";
 
 // GET ALL
 export const getFiles = async () => {
@@ -40,4 +41,22 @@ export const patchFiles = async (id, formData) => {
 
   if (!response.ok) throw new Error("Failed to patch file");
   return response;
+};
+
+export const getLocalFiles = async () => {
+    const response = await fetch(`${LOCAL_SCAN_URL}/files`);
+    if (!response.ok) throw new Error("Failed to fetch local files");
+    return response.json(); // Returns ["file1.pdf", "file2.pdf"]
+}
+// Import a specific file to the DB
+export const importLocalFile = async (fileName) => {
+    const url = `${LOCAL_SCAN_URL}/import?fileName=${encodeURIComponent(fileName)}`;
+    // Send as query param: ?fileName=abc.pdf
+    const response = await fetch(url, {
+      method: "POST",
+    });
+
+    if (!response.ok) throw new Error("Failed to import local file");
+    return response;
+
 };

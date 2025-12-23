@@ -1,0 +1,57 @@
+services:
+  db:
+    container_name: tilefile-postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: tile
+      POSTGRES_PASSWORD: file
+      POSTGRES_DB: tiletable
+      PGDATA: /var/lib/postgresql/data/pgdata # Standard location inside container
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5332:5432" # Accessible at localhost:5332 from your machine
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  # 2. Spring Boot Backend
+  backend:
+    container_name: tilefile-backend
+    build: ./spring-boot # Looks for Dockerfile in backend folder
+    volumes:
+      - ${SCAN_DIR}:/app/scanned-files:ro
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      # INTERNAL DOCKER NETWORK MAGIC:
+      # We use the service name "db" instead of "localhost"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tiletable
+      SPRING_DATASOURCE_USERNAME: tile
+      SPRING_DATASOURCE_PASSWORD: file
+    networks:
+      - app-network
+  frontend:
+    container_name: tilefile-frontend
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173" # Vite default
+    depends_on:
+      - backend
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
